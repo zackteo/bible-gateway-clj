@@ -4,10 +4,9 @@
 ;; Defaults
 (def version "NRSVCE")
 
-(defn search-string
-  ([book chapter] (str book "+" chapter))
-  ([book chapter verse] (str (search-string book chapter)
-                             "%3A" verse)))
+(defn search-string [book chapter verse]
+  (str book "+" chapter
+       (when verse (str "%3A" verse))))
 
 (defn bible-gateway-url [search-string version]
   (str "https://classic.biblegateway.com/passage/?search=" search-string "&version=" version "&interface=print"))
@@ -23,9 +22,7 @@
 
 (defn bible-quote
   ([book chapter version]
-   (-> (search-string book chapter)
-       (bible-gateway-url version)
-       url->quote))
+   (bible-quote book chapter nil version))
   ([book chapter verse version]
    (-> (search-string book chapter verse)
        (bible-gateway-url version)
@@ -33,6 +30,6 @@
 
 (comment
   (url->quote "https://www.biblegateway.com/passage/?search=john+3%3A16&version=NRSVCE&interface=print")
-  
+
   (bible-quote "john" 3 16 version)
   )
